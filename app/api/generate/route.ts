@@ -1,4 +1,23 @@
+// app/api/generate/route.ts
 import { NextResponse } from 'next/server';
+import { topics } from '../chemistryData';
+
+export async function POST(request: Request) {
+  const { question } = await request.json();
+  
+  // Simplified AI response logic
+  let response = "I'm your AI Chemistry Tutor. ";
+  
+  if (question.toLowerCase().includes("vsepr")) {
+    response += topics.bonding.concepts[0].explanation;
+  } else if (question.toLowerCase().includes("hybrid")) {
+    response += topics.bonding.concepts[1].explanation;
+  } else {
+    response += "Ask me about chemical bonding or thermodynamics!";
+  }
+  
+  return NextResponse.json({ response });
+}import { NextResponse } from 'next/server';
 
 /**
  * This is the server-side endpoint that the front-end will call.
