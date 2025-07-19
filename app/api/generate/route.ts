@@ -1,23 +1,7 @@
 // app/api/generate/route.ts
 import { NextResponse } from 'next/server';
-import { topics } from '../chemistryData';
-
-export async function POST(request: Request) {
-  const { question } = await request.json();
-  
-  // Simplified AI response logic
-  let response = "I'm your AI Chemistry Tutor. ";
-  
-  if (question.toLowerCase().includes("vsepr")) {
-    response += topics.bonding.concepts[0].explanation;
-  } else if (question.toLowerCase().includes("hybrid")) {
-    response += topics.bonding.concepts[1].explanation;
-  } else {
-    response += "Ask me about chemical bonding or thermodynamics!";
-  }
-  
-  return NextResponse.json({ response });
-}import { NextResponse } from 'next/server';
+// Import your local chemistry data
+import { topics } from '@/app/chemistryData';
 
 /**
  * This is the server-side endpoint that the front-end will call.
@@ -32,12 +16,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message is required.' }, { status: 400 });
     }
 
+    // Convert your local data to a string to be included in the prompt
+    const localDataString = JSON.stringify(topics, null, 2);
+
     // 2. Define the AI's persona, knowledge, and rules (System Prompt)
     // This prompt is crucial for guiding the AI and is kept secure on the server.
     const chemistrySystemPrompt = `
       You are "FuturisticChem," an expert AI chemistry tutor. Your knowledge is based on a comprehensive first-year university chemistry curriculum.
 
-      Your capabilities include:
+      **Primary Knowledge Source:**
+      In addition to your general knowledge, you MUST prioritize using the following specific data when it is relevant to the user's question. This is your primary source of truth for these topics. For example, if the user asks about VSEPR, you should use the explanation provided here.
+      ---
+      ${localDataString}
+      ---
+
+      Your general capabilities include:
       1.  **Core Concepts:** Stoichiometry, atomic theory, quantum mechanics, periodic trends, chemical bonding (ionic, covalent, metallic), molecular geometry (VSEPR), and intermolecular forces.
       2.  **States of Matter:** Properties of gases (Ideal Gas Law), liquids, and solids.
       3.  **Thermodynamics & Kinetics:** Enthalpy, entropy, Gibbs free energy, reaction rates, and rate laws.
@@ -61,9 +54,13 @@ export async function POST(request: Request) {
     };
 
     // 4. Call the Google Gemini API
-    // We use gemini-2.0-flash which is free for this level of use.
-    // The API key should be stored in an environment variable for security.
-    const apiKey = process.env.GOOGLE_API_KEY || ""; 
+    const apiKey = process.env.GOOGLE_API_KEY; 
+
+    if (!apiKey) {
+        console.error("Google API Key is not configured.");
+        return NextResponse.json({ error: 'Server configuration error: Missing API Key.' }, { status: 500 });
+    }
+
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     const apiResponse = await fetch(apiUrl, {
