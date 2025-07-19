@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 // Import your local chemistry data
 import { topics } from '@/app/chemistryData.ts';
+import { visual } from 'Moleculeviewer.tsx' 
 
 /**
  * This is the server-side endpoint that the front-end will call.
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
       - **GUARDRAIL:** If a user asks a question not about chemistry (e.g., "What is the capital of France?", "Write me a story"), you MUST politely decline. For example, say: "I am a specialized chemistry tutor and can only answer questions related to chemistry. How can I help you with a chemistry topic?"
       - **CALCULATIONS:** For any calculation problems, you MUST provide a clear, step-by-step explanation. Show the formula used, the substitution of values, and the final answer with the correct units.
       - **FORMATTING:** Use Markdown for clarity. Use subscripts for chemical formulas (e.g., H₂O) and format equations clearly.
-      - **TONE:** Be helpful, encouraging, and precise in your explanations.
+      - **TONE:** Be helpful, encouraging, and precise in your explanations and calculatons.
     `;
 
     // 3. Construct the final prompt for the API call
