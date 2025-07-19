@@ -1,7 +1,7 @@
 // app/api/generate/route.ts
 import { NextResponse } from 'next/server';
 // Import your local chemistry data
-import { topics } from '@/app/chemistryData.ts';
+import { topics } from '@/app/chemistryData';
 import { visual } from 'Moleculeviewer.tsx' 
 
 /**
