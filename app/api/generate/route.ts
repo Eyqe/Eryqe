@@ -1,7 +1,7 @@
 // app/api/generate/route.ts
 import { NextResponse } from 'next/server';
 // Import your local chemistry data
-import { topics } from '@/app/chemistryData';
+import { topics } from '@/app/chemistryData.ts';
 
 /**
  * This is the server-side endpoint that the front-end will call.
