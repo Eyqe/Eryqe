@@ -11,6 +11,13 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const Quiz = () => {
+  const [selectedTopic, setSelectedTopic] = useState<string>("All");
+  const filteredQuestions = selectedTopic === "All"
+  ? quizzes
+  : quizzes.filter((q) => q.topic === selectedTopic);
+
+const [shuffled, setShuffled] = useState(() => shuffleArray(filteredQuestions));
+const currentQuestion = shuffled[currentIndex];
   const [shuffled, setShuffled] = useState(() => shuffleArray(quizzes));
   const currentQuestion = shuffled[currentIndex];
   const [selected, setSelected] = useState<string | null>(null);
@@ -40,7 +47,26 @@ const [shuffled, setShuffled] = useState(() => shuffleArray(filtered));
       setCompleted(true);
     }
   };
-
+<div className="mb-4">
+  <label className="mr-2 font-semibold">Choose Topic:</label>
+  <select
+    value={selectedTopic}
+    onChange={(e) => setSelectedTopic(e.target.value)}
+    className="border rounded px-2 py-1"
+  >
+    <option value="All">All</option>
+    <option value="Atomic Structure">Atomic Structure</option>
+    <option value="Chemical Bonding">Chemical Bonding</option>
+    <option value="Chemical Formulae & Equations">Chemical Formulae & Equations</option>
+    <option value="Mole Concept & Stoichiometry">Mole Concept & Stoichiometry</option>
+    <option value="Gas Laws">Gas Laws</option>
+    <option value="Thermochemistry">Thermochemistry</option>
+    <option value="Acids & Bases">Acids & Bases</option>
+    <option value="Redox Reactions">Redox Reactions</option>
+    <option value="Chemical Equilibrium">Chemical Equilibrium</option>
+    <option value="Organic Chemistry">Organic Chemistry</option>
+  </select>
+</div>
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
       {completed ? (
