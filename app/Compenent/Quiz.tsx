@@ -3,15 +3,33 @@
 import React, { useState } from 'react';
 import { quizzes } from '../quizzes';
 
+function shuffleArray<T>(array: T[]): T[] {
+  return array
+    .map((item) => ({ sort: Math.random(), value: item }))
+    .sort((a, b) => a.sort - b.sort)
+    .map((obj) => obj.value);
+}
+
 const Quiz = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [shuffled, setShuffled] = useState(() => shuffleArray(quizzes));
+  const currentQuestion = shuffled[currentIndex];
   const [selected, setSelected] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const scoreHistory = JSON.parse(localStorage.getItem('quizScores') || '[]');
 
-  const currentQuestion = quizzes[currentIndex];
+  if (selected !== currentQuestion.answer) {
+  setWrongList((prev) => [...prev, currentQuestion.id]);
+}
+const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
+const filtered = selectedTopic
+  ? quizzes.filter((q) => q.topic === selectedTopic)
+  : quizzes;
+
+const [shuffled, setShuffled] = useState(() => shuffleArray(filtered));
+  
   const handleNext = () => {
     if (selected === currentQuestion.answer) setScore(score + 1);
     setSelected(null);
@@ -67,5 +85,32 @@ const Quiz = () => {
     </div>
   );
 };
-
+{completed ? (
+  <div className="text-center">
+    <h2 className="text-2xl font-bold">Quiz Completed!</h2>
+    <p className="text-lg mt-2">Your score: {score} / {quizzes.length}</p>
+    {wrongList.length > 0 && (
+      <button
+        className="mt-4 bg-orange-500 text-white px-4 py-2 rounded"
+        onClick={() => {
+          const retryQuestions = quizzes.filter(q => wrongList.includes(q.id));
+          setShuffled(shuffleArray(retryQuestions));
+          setCurrentIndex(0);
+          setCompleted(false);
+          setScore(0);
+          setWrongList([]);
+        }}
+      >
+        Retry Incorrect ({wrongList.length})
+      </button>
+    )}
+  </div>
+) : ...
+  useEffect(() => {
+  if (completed) {
+    const history = JSON.parse(localStorage.getItem('quizScores') || '[]');
+    history.push({ date: new Date(), score });
+    localStorage.setItem('quizScores', JSON.stringify(history));
+  }
+}, [completed]);
 export default Quiz;
