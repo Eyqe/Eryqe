@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import { Bot, User, Send, Cpu, FlaskConical, XCircle } from 'lucide-react';
+import Quiz from '../../components/Quiz';
 
 // --- Type Definitions for Messages ---
 interface Message {
@@ -23,7 +24,7 @@ export default function Home() {
     setMessages([
       {
         role: 'assistant',
-        content: "Hello! I am FuturisticChem, your personal AI chemistry tutor. Feel free to ask me anything from stoichiometry to organic chemistry."
+        content: "Hello! I am FuturisticChem, your personal AI chemistry tutor. Feel free to ask me any topics of chemistry."
       }
     ]);
   }, []);
@@ -83,7 +84,13 @@ export default function Home() {
       .replace(/CO₂/g, 'CO<sub>2</sub>');
     return { __html: formattedContent };
   };
-
+export default function QuizPage() {
+  return (
+    <main className="min-h-screen flex justify-center items-center">
+      <Quiz />
+    </main>
+  );
+}
   // --- UI Rendering ---
   return (
     <div className="flex flex-col h-screen bg-[#212121] text-gray-200 font-sans">
